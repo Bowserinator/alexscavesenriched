@@ -1,5 +1,6 @@
 {
 	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
 	"render_type": "translucent",
 	"textures": {
 		"0": "alexscavesenriched:block/nuka_cola_glass",
@@ -86,8 +87,8 @@
 			}
 		},
 		{
-			"from": [7, 5, 7],
-			"to": [9, 10, 9],
+			"from": [6.9999, 4.9999, 6.9999],
+			"to": [9.0001, 10.0001, 9.0001],
 			"rotation": {"angle": 0, "axis": "y", "origin": [7, 5, 7]},
 			"faces": {
 				"north": {"uv": [9, 3, 11, 6], "texture": "#1"},
@@ -99,8 +100,8 @@
 			}
 		},
 		{
-			"from": [6.5, 0, 6.5],
-			"to": [9.5, 5, 9.5],
+			"from": [6.4999, -0.0001, 6.4999],
+			"to": [9.5001, 5.0001, 9.5001],
 			"rotation": {"angle": 0, "axis": "y", "origin": [6, 0, -1]},
 			"faces": {
 				"north": {"uv": [0, 0, 3, 5], "texture": "#1"},
