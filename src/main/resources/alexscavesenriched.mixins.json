@@ -1,26 +1,28 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "net.hellomouse.alexscavesenriched.mixins",
-    "compatibilityLevel": "JAVA_8",
-    "refmap": "alexscavesenriched-refmap.json",
-    "mixins": [
-        "EnchantmentTargetMixin",
-        "NuclearFurnaceBlockEntityMixin",
-        "NuclearFurnaceMenuMixin",
-        "entity.AbstractSkeletonMixin",
-        "entity.Monster",
-        "entity.NuclearBombEntityMixin",
-        "entity.NuclearExplosionEntityMixin",
-        "entity.TremorzillaEntityMixin",
-        "items.EnchantmentMixin"
-    ],
-    "client": [
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "overwrites": {
-        "requireAnnotations": true
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.hellomouse.alexscavesenriched.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "alexscavesenriched-refmap.json",
+  "mixins": [
+    "EnchantmentTargetMixin",
+    "NuclearFurnaceBlockEntityMixin",
+    "NuclearFurnaceMenuMixin",
+    "block.AcidBlockMixin",
+    "block.FluidBlockMixin",
+    "entity.AbstractSkeletonMixin",
+    "entity.Monster",
+    "entity.NuclearBombEntityMixin",
+    "entity.NuclearExplosionEntityMixin",
+    "entity.TremorzillaEntityMixin",
+    "items.EnchantmentMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   }
 }

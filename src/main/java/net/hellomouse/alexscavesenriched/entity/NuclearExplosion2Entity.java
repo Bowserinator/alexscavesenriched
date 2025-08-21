@@ -5,16 +5,11 @@ import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.block.TremorzillaEggBlock;
-import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
 import com.github.alexmodguy.alexscaves.server.entity.living.RaycatEntity;
 import com.github.alexmodguy.alexscaves.server.entity.living.TremorzillaEntity;
 import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
 import com.github.alexmodguy.alexscaves.server.misc.ACMath;
 import com.github.alexmodguy.alexscaves.server.misc.ACTagRegistry;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.github.alexmodguy.alexscaves.server.potion.ACEffectRegistry;
 import net.hellomouse.alexscavesenriched.*;
 import net.hellomouse.alexscavesenriched.client.ACEClientMod;
@@ -49,6 +44,12 @@ import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // Nuclear explosion replaces Alex's cave's nuclear explosion when enabled in config
 // (for usual nuclear bomb detonations)
@@ -555,7 +556,7 @@ public class NuclearExplosion2Entity extends Entity {
             }
             BlockPos place = carve.offset(Direction.DOWN, deltaY - 1);
             if (getEntityWorld().getDimensionKey() != DimensionTypes.THE_NETHER) {
-                getEntityWorld().setBlockState(place, ACFluidRegistry.ACID_FLUID_SOURCE.get().getDefaultState().getBlockState());
+                getEntityWorld().setBlockState(place, ACBlockRegistry.ACID.get().getDefaultState());
             } else {
                 getEntityWorld().setBlockState(place, ACBlockRegistry.UNREFINED_WASTE.get().getDefaultState());
             }
