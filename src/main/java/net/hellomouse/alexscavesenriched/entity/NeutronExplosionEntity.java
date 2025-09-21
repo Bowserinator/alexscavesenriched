@@ -1,7 +1,6 @@
 package net.hellomouse.alexscavesenriched.entity;
 
 
-import com.github.alexmodguy.alexscaves.AlexsCaves;
 import com.github.alexmodguy.alexscaves.client.ClientProxy;
 import com.github.alexmodguy.alexscaves.server.entity.living.RaycatEntity;
 import com.github.alexmodguy.alexscaves.server.entity.living.TremorzillaEntity;
@@ -34,12 +33,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Stack;
 
 public class NeutronExplosionEntity extends Entity {
@@ -107,12 +104,17 @@ public class NeutronExplosionEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
-        this.clientTick();
+        var clientSide = this.level().isClientSide;
+        if (clientSide) {
+            this.clientTick();
+        }
         int chunksAffected = getChunksAffected();
         int radius = chunksAffected * 15;
         if (!spawnedParticle) {
             spawnedParticle = true;
-            ClientProxy.renderNukeFlashFor = 8;
+            if (clientSide) {
+                ClientProxy.renderNukeFlashFor = 8;
+            }
             playSound(ACSoundRegistry.NUCLEAR_EXPLOSION_RINGING.get(), 100, 50);
 
             getCommandSenderWorld().addAlwaysVisibleParticle(ACEParticleRegistry.NEUTRON_BLAST.get(), true,

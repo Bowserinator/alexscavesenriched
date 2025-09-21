@@ -127,7 +127,8 @@ public class BlackHoleEntity extends Entity {
     }
 
     protected void explodeTick() {
-        if (this.level().isClientSide) {
+        var clientSide = this.level().isClientSide;
+        if (clientSide) {
             this.explodeClientTick();
             this.clientTick();
         }
@@ -136,7 +137,9 @@ public class BlackHoleEntity extends Entity {
         int radius = chunksAffected * 15;
         if (!spawnedParticle) {
             spawnedParticle = true;
-            ClientProxy.renderNukeFlashFor = 8;
+            if (clientSide) {
+                ClientProxy.renderNukeFlashFor = 8;
+            }
             playSound(ACSoundRegistry.NUCLEAR_EXPLOSION_RINGING.get(), 100, 50);
         }
 
@@ -230,7 +233,8 @@ public class BlackHoleEntity extends Entity {
     }
 
     protected void postExplodeTick() {
-        if (this.level().isClientSide && this.getDecayDurationLeft() > 60) {
+        var clientSide = this.level().isClientSide;
+        if (clientSide && this.getDecayDurationLeft() > 60) {
             Vec3 center = this.getEyePosition();
             Vec3 delta = new Vec3(
                     this.level().random.nextFloat() - 0.5,
@@ -254,7 +258,9 @@ public class BlackHoleEntity extends Entity {
             if (!this.isNonDecaying())
                 this.setDecayDurationLeft(this.getDecayDurationLeft() - 1);
         } else {
-            ClientProxy.renderNukeFlashFor = 8;
+            if (clientSide) {
+                ClientProxy.renderNukeFlashFor = 8;
+            }
             Vec3 center = this.getEyePosition();
             for (int i = 0; i < 20; i++) {
                 Vec3 delta = new Vec3(

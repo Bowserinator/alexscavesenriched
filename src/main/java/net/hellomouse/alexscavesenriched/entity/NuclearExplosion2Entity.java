@@ -148,8 +148,9 @@ public class NuclearExplosion2Entity extends Entity {
     @Override
     public void tick() {
         super.tick();
-        this.clientTick();
-
+        if (this.level().isClientSide()) {
+            this.clientTick();
+        }
         int chunksAffected = getChunksAffected();
         int radius = chunksAffected * CHUNKS_AFFECTED_RADIUS_MULTIPLIER;
         if (!spawnedParticle) {
@@ -297,6 +298,7 @@ public class NuclearExplosion2Entity extends Entity {
         toDistortChunks.sort((blockPos1, blockPos2) ->
                 Double.compare(blockPos2.distManhattan(this.blockPosition()), blockPos1.distManhattan(this.blockPosition())));
     }
+
     private final HashMap<Block, Optional<Block>> cachedSmeltingResults = new HashMap<>();
 
     private void loadChunksAround(boolean load) {
@@ -505,7 +507,7 @@ public class NuclearExplosion2Entity extends Entity {
                 center.add(direction.scale(radius)),
                 block -> false);
 
-        AtomicInteger resistance_quota = new AtomicInteger((int)(600 * getSize() / 6.0F));
+        AtomicInteger resistance_quota = new AtomicInteger((int) (600 * getSize() / 6.0F));
         AtomicInteger blocks_affected = new AtomicInteger(0);
 
         BlockGetter.traverseBlocks(ctx.getFrom(), ctx.getTo(), ctx.isTargetBlock(), (_ctx, pos) -> {
@@ -577,7 +579,7 @@ public class NuclearExplosion2Entity extends Entity {
                 areaEffectCloudEntity.setParticle(ACParticleRegistry.GAMMAROACH.get());
                 areaEffectCloudEntity.setFixedColor(0);
                 areaEffectCloudEntity.addEffect(new MobEffectInstance(ACEffectRegistry.IRRADIATED.get(), AlexsCavesEnriched.CONFIG.nuclear.irradiationPotionTime, 4));
-                areaEffectCloudEntity.setRadius((float)radius);
+                areaEffectCloudEntity.setRadius((float) radius);
                 areaEffectCloudEntity.setDuration(AlexsCavesEnriched.CONFIG.nuclear.irradiationTime);
                 areaEffectCloudEntity.setRadiusPerTick(-areaEffectCloudEntity.getRadius() / (float) areaEffectCloudEntity.getDuration());
                 this.getCommandSenderWorld().addFreshEntity(areaEffectCloudEntity);
@@ -600,7 +602,7 @@ public class NuclearExplosion2Entity extends Entity {
     }
 
     private int getExtraChunks() {
-        return (int)Math.ceil(this.getSize() / AlexsCaves.COMMON_CONFIG.nukeExplosionSizeModifier.get().floatValue() * EXTRA_BLAST_RADIUS_CHUNKS);
+        return (int) Math.ceil(this.getSize() / AlexsCaves.COMMON_CONFIG.nukeExplosionSizeModifier.get().floatValue() * EXTRA_BLAST_RADIUS_CHUNKS);
     }
 
     public void remove(@NotNull RemovalReason removalReason) {
