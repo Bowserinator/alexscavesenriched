@@ -103,8 +103,8 @@ public class AlexsCavesEnriched {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ACEDispenserItemBehavior.bootStrap();
-        ACECriterionTriggers.init();
+        event.enqueueWork(ACEDispenserItemBehavior::bootStrap);
+        event.enqueueWork(ACECriterionTriggers::init);
         LOGGER.info("Alex's Caves Enriched has loaded");
     }
 }
