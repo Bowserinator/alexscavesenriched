@@ -18,8 +18,10 @@ public class EnchantmentTargetMixin {
     @Inject(at = @At(value = "HEAD"), method = {"canEnchant"}, cancellable = true)
     public void isAcceptableItem(Item item, CallbackInfoReturnable<Boolean> cir) {
         // Allow raygun mk2 to get raygun enchants
-        if (this.delegate.test(ACItemRegistry.RAYGUN.get()) && item.equals(ACEItemRegistry.RAYGUN.get())) {
-            cir.setReturnValue(true);
+        if (ACItemRegistry.RAYGUN.isPresent()) { // Jank to work around a weird crash that I cant reproduce on my machine
+            if (this.delegate.test(ACItemRegistry.RAYGUN.get()) && item.equals(ACEItemRegistry.RAYGUN.get())) {
+                cir.setReturnValue(true);
+            }
         }
     }
 }
