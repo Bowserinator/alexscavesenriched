@@ -15,17 +15,8 @@ import net.hellomouse.alexscavesenriched.recipe.CentrifugeRecipe;
 import net.hellomouse.alexscavesenriched.recipe.NeutronKillRecipe;
 import net.hellomouse.alexscavesenriched.recipe.NuclearFurnanceRecipeAdditional;
 import net.hellomouse.alexscavesenriched.recipe.NuclearTransmutationRecipe;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @EmiEntrypoint
 public class ACEEMIPlugin implements EmiPlugin {
@@ -63,43 +54,19 @@ public class ACEEMIPlugin implements EmiPlugin {
         registry.addWorkstation(ACE_CENTRIFUGE_CATEGORY, CENTRIFUGE);
         registry.addWorkstation(ACE_CENTRIFUGE_CATEGORY, CENTRIFUGE2);
 
-        {
-            RecipeManager manager = registry.getRecipeManager();
-            for (NuclearFurnanceRecipeAdditional recipe : manager.getAllRecipesFor(ACERecipeRegistry.NUCLEAR_FURNACE_TYPE.get()))
-                registry.addRecipe(new EMINuclearFurnaceRecipe(recipe));
+        RecipeManager manager = registry.getRecipeManager();
+        for (NuclearFurnanceRecipeAdditional recipe : manager.getAllRecipesFor(ACERecipeRegistry.NUCLEAR_FURNACE_TYPE.get()))
+            registry.addRecipe(new EMINuclearFurnaceRecipe(recipe));
+
+        for (NuclearTransmutationRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.NUCLEAR_TRANSMUTATION_TYPE.get())) {
+            registry.addRecipe(new EMITransmutationRecipe(ACE_NUCLEAR_TRANSMUTATION_CATEGORY, recipe));
         }
-        {
-            HashSet<Component> alreadyVisited = new HashSet<>();
-            RecipeManager manager = registry.getRecipeManager();
-            for (NuclearTransmutationRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.NUCLEAR_TRANSMUTATION_TYPE.get())) {
-                if (recipe.getIsTag()) {
-                    var tag = TagKey.create(Registries.BLOCK, recipe.getInputLocation());
-                    Set<ItemStack> blocksInTag = ForgeRegistries.BLOCKS.getEntries().stream()
-                            .filter((entry) -> entry.getValue().defaultBlockState().is(tag))
-                            .map((entry) -> entry.getValue().asItem().getDefaultInstance())
-                            .collect(Collectors.toSet());
-                    for (var blockItem : blocksInTag) {
-                        if (alreadyVisited.contains(blockItem.getItem().getDescription()))
-                            continue;
-                        registry.addRecipe(new EMINuclearTransmutationRecipe(recipe, blockItem));
-                        alreadyVisited.add(blockItem.getItem().getDescription());
-                    }
-                } else {
-                    if (!alreadyVisited.contains(recipe.getInput().getItem().getDescription()))
-                        registry.addRecipe(new EMINuclearTransmutationRecipe(recipe));
-                    alreadyVisited.add(recipe.getInput().getItem().getDescription());
-                }
-            }
+
+        for (NeutronKillRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.NEUTRON_KILL_TYPE.get())) {
+            registry.addRecipe(new EMITransmutationRecipe(ACE_NEUTRON_KILL_CATEGORY, recipe));
         }
-        {
-            RecipeManager manager = registry.getRecipeManager();
-            for (NeutronKillRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.NEUTRON_KILL_TYPE.get())) {
-                registry.addRecipe(new EMINeutronKillRecipe(recipe));
-            }
-            {
-                for (CentrifugeRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.CENTRIFUGE_TYPE.get()))
-                    registry.addRecipe(new EMICentrifugeRecipe(recipe));
-            }
-        }
+
+        for (CentrifugeRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.CENTRIFUGE_TYPE.get()))
+            registry.addRecipe(new EMICentrifugeRecipe(recipe));
     }
 }

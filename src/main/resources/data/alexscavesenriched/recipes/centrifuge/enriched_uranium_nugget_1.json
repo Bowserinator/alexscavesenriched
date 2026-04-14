@@ -6,10 +6,8 @@
     "chance": 0.00001388888,
     "outputs": [
         {
-            "item": "alexscavesenriched:enriched_uranium_nugget"
-        },
-        {
-            "item": "alexscavesenriched:enriched_uranium_nugget"
+            "item": "alexscavesenriched:enriched_uranium_nugget",
+            "count": 2
         },
         {
             "item": "alexscaves:uranium"

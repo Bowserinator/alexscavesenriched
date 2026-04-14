@@ -1,5 +1,6 @@
 package net.hellomouse.alexscavesenriched.utils
 
+import com.google.gson.JsonSyntaxException
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import net.minecraft.core.registries.BuiltInRegistries
@@ -82,7 +83,8 @@ data class BlockList(val list: Array<Either<Block, TagKey<Block>>>) : Predicate<
             either.map<Iterable<ItemStack>>(
                 { block -> listOf(block.asItem().defaultInstance) },
                 { tagKey ->
-                    BuiltInRegistries.BLOCK.getTagOrEmpty(tagKey)
+                    BuiltInRegistries.BLOCK.getTag(tagKey)
+                        .orElseThrow { JsonSyntaxException("Invalid block tag $tagKey") }
                         .map { holder -> holder.get().asItem().defaultInstance }
                 })
         }

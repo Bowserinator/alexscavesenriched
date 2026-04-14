@@ -1,5 +1,5 @@
 {
     "type": "alexscavesenriched:nuclear_transmutation",
-    "input": "#alexscaves:concrete",
+    "input": "#alexscavesenriched:concrete",
     "output": "minecraft:gravel"
 }

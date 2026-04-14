@@ -102,6 +102,10 @@ public class CentrifugeRecipe implements Recipe<SimpleContainer> {
     }
 
     public static class CentrifugeRecipeSerializer extends CodecRecipeSerializer<CentrifugeRecipe, Incomplete> {
+        public CentrifugeRecipeSerializer() {
+            super(Incomplete.CODEC.codec());
+        }
+
         @Override
         public CentrifugeRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
             var input = Ingredient.fromNetwork(buf);
@@ -122,11 +126,6 @@ public class CentrifugeRecipe implements Recipe<SimpleContainer> {
                 buf.writeItem(itemStack);
             }
             buf.writeFloat(recipe.chance);
-        }
-
-        @Override
-        public Codec<Incomplete> getCodec() {
-            return Incomplete.CODEC.codec();
         }
     }
 }
