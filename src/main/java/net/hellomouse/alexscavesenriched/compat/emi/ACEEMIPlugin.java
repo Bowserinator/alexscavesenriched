@@ -92,26 +92,9 @@ public class ACEEMIPlugin implements EmiPlugin {
             }
         }
         {
-            HashSet<Component> alreadyVisited = new HashSet<>();
             RecipeManager manager = registry.getRecipeManager();
             for (NeutronKillRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.NEUTRON_KILL_TYPE.get())) {
-                if (recipe.getIsTag()) {
-                    var tag = TagKey.create(Registries.BLOCK, recipe.getInputLocation());
-                    Set<ItemStack> blocksInTag = ForgeRegistries.BLOCKS.getEntries().stream()
-                            .filter((entry) -> entry.getValue().defaultBlockState().is(tag))
-                            .map((entry) -> entry.getValue().asItem().getDefaultInstance())
-                            .collect(Collectors.toSet());
-                    for (var blockItem : blocksInTag) {
-                        if (alreadyVisited.contains(blockItem.getItem().getDescription()))
-                            continue;
-                        registry.addRecipe(new EMINeutronKillRecipe(recipe, blockItem));
-                        alreadyVisited.add(blockItem.getItem().getDescription());
-                    }
-                } else {
-                    if (!alreadyVisited.contains(recipe.getInput().getItem().getDescription()))
-                        registry.addRecipe(new EMINeutronKillRecipe(recipe));
-                    alreadyVisited.add(recipe.getInput().getItem().getDescription());
-                }
+                registry.addRecipe(new EMINeutronKillRecipe(recipe));
             }
             {
                 for (CentrifugeRecipe recipe : manager.getAllRecipesFor(ACERecipeRegistry.CENTRIFUGE_TYPE.get()))

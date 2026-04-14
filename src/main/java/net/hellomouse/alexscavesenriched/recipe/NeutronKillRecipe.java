@@ -1,13 +1,15 @@
 package net.hellomouse.alexscavesenriched.recipe;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.hellomouse.alexscavesenriched.ACERecipeRegistry;
+import net.hellomouse.alexscavesenriched.utils.BlockList;
+import net.hellomouse.alexscavesenriched.utils.PacketUtils;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -16,46 +18,24 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
-import java.util.function.Predicate;
 
 // For in-world neutron bomb detonation transmutation
 public class NeutronKillRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
-    private final Predicate<BlockState> inputPredicate;
-    private final ResourceLocation inputLocation;
+    private final BlockList input;
     private final Block outputBlock;
-    private final Block inputBlock;
-    private final boolean isTag;
     private final float chance;
 
-    public NeutronKillRecipe(ResourceLocation id, ResourceLocation inputLocation, boolean isTag, Block output, float chance) {
+    public NeutronKillRecipe(ResourceLocation id, BlockList input, Block output, float chance) {
         this.id = id;
-        this.inputLocation = inputLocation;
+        this.input = input;
         this.outputBlock = output;
-        this.isTag = isTag;
         this.chance = chance;
-
-        if (isTag) {
-            TagKey<Block> tag = TagKey.create(Registries.BLOCK, inputLocation);
-            inputPredicate = state -> state.is(tag);
-            inputBlock = null;
-        } else {
-            Block block = ForgeRegistries.BLOCKS.getValue(inputLocation);
-            inputPredicate = state -> {
-                assert block != null;
-                return state.is(block);
-            };
-            inputBlock = block;
-        }
     }
 
     public boolean matches(@NotNull BlockState state) {
-        return inputPredicate.test(state);
+        return input.test(state);
     }
 
     public Block getOutput() {
@@ -66,17 +46,13 @@ public class NeutronKillRecipe implements Recipe<SimpleContainer> {
         return chance;
     }
 
+    public BlockList getInput() {
+        return input;
+    }
+
     @Override
     public @NotNull ResourceLocation getId() {
         return id;
-    }
-
-    public boolean getIsTag() {
-        return isTag;
-    }
-
-    public @NotNull ResourceLocation getInputLocation() {
-        return inputLocation;
     }
 
     // These methods aren't used here but must be implemented
@@ -110,41 +86,41 @@ public class NeutronKillRecipe implements Recipe<SimpleContainer> {
         return ACERecipeRegistry.NEUTRON_KILL_TYPE.get();
     }
 
-    public @Nullable ItemStack getInput() {
-        if (inputBlock == null)
-            return null;
-        return inputBlock.asItem().getDefaultInstance();
+    public record Incomplete(BlockList input, Block output,
+                             float chance) implements CodecRecipeSerializer.Partial<NeutronKillRecipe> {
+        public static MapCodec<Incomplete> CODEC = RecordCodecBuilder.mapCodec(instance ->
+                instance.group(
+                        BlockList.CODEC.fieldOf("input").forGetter(Incomplete::input),
+                        BuiltInRegistries.BLOCK.byNameCodec().fieldOf("output").forGetter(Incomplete::output),
+                        Codec.FLOAT.optionalFieldOf("chance", 1.0f).forGetter(Incomplete::chance)
+                ).apply(instance, Incomplete::new)
+        );
+
+        @Override
+        public NeutronKillRecipe withId(ResourceLocation id) {
+            return new NeutronKillRecipe(id, input, output, chance);
+        }
     }
 
-    public static class NeutronKillRecipeSerializer implements RecipeSerializer<NeutronKillRecipe> {
-        @Override
-        public @NotNull NeutronKillRecipe fromJson(ResourceLocation id, JsonObject json) {
-            String inputStr = json.get("input").getAsString();
-            Block output = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(json.get("output").getAsString()));
-            float chance = json.has("chance") ? GsonHelper.getAsFloat(json, "chance") : 1.0f;
-            return new NeutronKillRecipe(id,
-                    inputStr.startsWith("#") ?
-                            ResourceLocation.parse(inputStr.substring(1)) :
-                            ResourceLocation.parse(inputStr),
-                    inputStr.startsWith("#"),
-                    output, chance);
-        }
-
+    public static class NeutronKillRecipeSerializer extends CodecRecipeSerializer<NeutronKillRecipe, Incomplete> {
         @Override
         public NeutronKillRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-            ResourceLocation input = buf.readResourceLocation();
-            Block output = ForgeRegistries.BLOCKS.getValue(buf.readResourceLocation());
-            float chance = buf.readFloat();
-            boolean isTag = buf.readBoolean();
-            return new NeutronKillRecipe(id, input, isTag, output, chance);
+            var input = BlockList.fromBuf(buf);
+            var output = PacketUtils.readBlock(buf);
+            var chance = buf.readFloat();
+            return new NeutronKillRecipe(id, input, output, chance);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, NeutronKillRecipe recipe) {
-            buf.writeResourceLocation(recipe.getInputLocation());
-            buf.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(recipe.getOutput())));
-            buf.writeFloat(recipe.getChance());
-            buf.writeBoolean(recipe.getIsTag());
+            recipe.input.toBuf(buf);
+            PacketUtils.writeBlock(buf, recipe.outputBlock);
+            buf.writeFloat(recipe.chance);
+        }
+
+        @Override
+        public Codec<Incomplete> getCodec() {
+            return Incomplete.CODEC.codec();
         }
     }
 }

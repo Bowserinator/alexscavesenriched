@@ -1,14 +1,8 @@
 plugins {
     id 'dev.architectury.loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
-    id 'idea'
-    id 'java'
-}
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+    id 'org.jetbrains.kotlin.jvm' version "2.2.10"
+
 }
 group = project.maven_group
 version = project.mod_version
@@ -64,10 +58,16 @@ repositories {
     }
     maven { url "https://maven.shedaniel.me/" }
     maven { url = 'https://maven.parchmentmc.org' }
-
+    maven {
+        name = "Kotlin for Forge"
+        setUrl("https://thedarkcolour.github.io/KotlinForForge/")
+    }
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'thedarkcolour:kotlinforforge:4.10.0'
+
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${project.mixin_extras_version}"))
     implementation(include("io.github.llamalad7:mixinextras-forge:${project.mixin_extras_version}"))
     minecraft "net.minecraft:minecraft:$project.minecraft_version"
@@ -100,9 +100,6 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
-
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -124,4 +121,7 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
+}
+kotlin {
+    jvmToolchain(17)
 }

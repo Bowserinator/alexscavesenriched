@@ -3,10 +3,11 @@ package net.hellomouse.alexscavesenriched.compat.emi;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.BasicEmiRecipe;
 import dev.emi.emi.api.render.EmiTexture;
+import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.hellomouse.alexscavesenriched.recipe.NeutronKillRecipe;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 public class EMINeutronKillRecipe extends BasicEmiRecipe {
     protected NeutronKillRecipe recipe;
@@ -14,18 +15,7 @@ public class EMINeutronKillRecipe extends BasicEmiRecipe {
     public EMINeutronKillRecipe(NeutronKillRecipe recipe) {
         super(ACEEMIPlugin.ACE_NEUTRON_KILL_CATEGORY, recipe.getId(), 70, 18);
         this.recipe = recipe;
-
-        if (recipe.getInput() != null)
-            this.inputs.add(EmiStack.of(recipe.getInput()));
-        else
-            throw new RuntimeException("EMINeutronKillRecipe does not expect tag");
-        this.outputs.add(EmiStack.of(recipe.getResultItem(null)));
-    }
-
-    public EMINeutronKillRecipe(NeutronKillRecipe recipe, ItemStack inputsOverride) {
-        super(ACEEMIPlugin.ACE_NEUTRON_KILL_CATEGORY, recipe.getId().withPrefix("/" + inputsOverride.getDescriptionId()), 70, 18);
-        this.recipe = recipe;
-        this.inputs.add(EmiStack.of(inputsOverride));
+        this.inputs = recipe.getInput().toItemStacks().stream().map(itemStack -> EmiIngredient.of(Ingredient.of(itemStack))).distinct().toList();
         this.outputs.add(EmiStack.of(recipe.getResultItem(null)));
     }
 

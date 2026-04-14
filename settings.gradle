@@ -5,6 +5,9 @@ pluginManagement {
         maven { url "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '2.2.0'
+    }
 }
 
 rootProject.name = 'alexscavesenriched'

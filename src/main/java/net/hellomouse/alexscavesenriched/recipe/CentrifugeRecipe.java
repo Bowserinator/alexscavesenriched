@@ -89,8 +89,8 @@ public class CentrifugeRecipe implements Recipe<SimpleContainer> {
                              float chance) implements CodecRecipeSerializer.Partial<CentrifugeRecipe> {
         public static final MapCodec<Incomplete> CODEC = RecordCodecBuilder.mapCodec((instance) ->
                 instance.group(
-                        CodecUtils.INGRIDIENT_CODEC.fieldOf("input").forGetter(Incomplete::ingredient),
-                        CodecUtils.ITEMSTACK_CODEC.listOf().fieldOf("outputs").forGetter(Incomplete::output),
+                        CodecUtils.INGREDIENT_CODEC.fieldOf("input").forGetter(Incomplete::ingredient),
+                        CodecUtils.ITEM_STACK_CODEC.codec().listOf().fieldOf("outputs").forGetter(Incomplete::output),
                         Codec.FLOAT.optionalFieldOf("chance", 1.0f).forGetter(Incomplete::chance)
                 ).apply(instance, Incomplete::new)
         );
