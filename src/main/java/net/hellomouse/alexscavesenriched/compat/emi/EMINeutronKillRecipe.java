@@ -15,7 +15,11 @@ public class EMINeutronKillRecipe extends BasicEmiRecipe {
     public EMINeutronKillRecipe(NeutronKillRecipe recipe) {
         super(ACEEMIPlugin.ACE_NEUTRON_KILL_CATEGORY, recipe.getId(), 70, 18);
         this.recipe = recipe;
-        this.inputs = recipe.getInput().toItemStacks().stream().map(itemStack -> EmiIngredient.of(Ingredient.of(itemStack))).distinct().toList();
+        this.inputs = recipe.getInput().toItemStacks().stream()
+                .map(itemStack -> EmiIngredient.of(Ingredient.of(itemStack)))
+                .distinct()
+                .filter(itemStack -> !itemStack.isEmpty())
+                .toList();
         this.outputs.add(EmiStack.of(recipe.getResultItem(null)));
     }
 
