@@ -7,13 +7,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.hellomouse.alexscavesenriched.recipe.CentrifugeRecipe;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Objects;
 
 public class EMICentrifugeRecipe extends BasicEmiRecipe {
     protected CentrifugeRecipe recipe;
@@ -25,19 +19,10 @@ public class EMICentrifugeRecipe extends BasicEmiRecipe {
     public EMICentrifugeRecipe(CentrifugeRecipe recipe) {
         super(ACEEMIPlugin.ACE_CENTRIFUGE_CATEGORY, recipe.getId(), 70, 18);
         this.recipe = recipe;
-        if (recipe.getIsTag()) {
-            var tag = TagKey.create(Registries.ITEM, recipe.getInputLocation());
-            this.inputs.add(EmiIngredient.of(tag));
-        } else {
-            this.inputs.add(EmiStack.of(Objects.requireNonNull(recipe.getInput())));
-        }
+        this.inputs.add(EmiIngredient.of(recipe.getIngredient()));
 
-        HashMap<Item, Integer> outputCounts = new HashMap<>();
-        for (var output : recipe.getOutputs())
-            outputCounts.put(output, 1 + outputCounts.getOrDefault(output, 0));
-
-        for (var entry : outputCounts.entrySet())
-            this.outputs.add(EmiStack.of(entry.getKey(), entry.getValue()));
+        for (var entry : recipe.getOutputs())
+            this.outputs.add(EmiStack.of(entry));
     }
 
     public EMICentrifugeRecipe(CentrifugeRecipe recipe, ItemStack inputsOverride) {

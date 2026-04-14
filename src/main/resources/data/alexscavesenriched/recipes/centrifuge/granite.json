@@ -1,9 +1,15 @@
 {
     "type": "alexscavesenriched:centrifuge",
-    "input": "minecraft:granite",
+    "input": {
+        "item": "minecraft:granite"
+    },
     "chance": 0.005,
     "outputs": [
-        "minecraft:diorite",
-        "minecraft:quartz"
+        {
+            "item": "minecraft:diorite"
+        },
+        {
+            "item": "minecraft:quartz"
+        }
     ]
 }

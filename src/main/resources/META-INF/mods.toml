@@ -40,3 +40,10 @@ mandatory = true
 versionRange="[11.1.136,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.alexscavesenriched]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "[4.10.0,)"
+ordering = "AFTER"
+side = "BOTH"
