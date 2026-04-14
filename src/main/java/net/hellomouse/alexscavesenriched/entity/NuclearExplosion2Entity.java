@@ -6,6 +6,7 @@ import com.github.alexmodguy.alexscaves.client.particle.ACParticleRegistry;
 import com.github.alexmodguy.alexscaves.server.block.ACBlockRegistry;
 import com.github.alexmodguy.alexscaves.server.block.TremorzillaEggBlock;
 import com.github.alexmodguy.alexscaves.server.block.fluid.ACFluidRegistry;
+import com.github.alexmodguy.alexscaves.server.entity.item.NuclearExplosionEntity;
 import com.github.alexmodguy.alexscaves.server.entity.living.RaycatEntity;
 import com.github.alexmodguy.alexscaves.server.entity.living.TremorzillaEntity;
 import com.github.alexmodguy.alexscaves.server.misc.ACDamageTypes;
@@ -58,7 +59,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 // Nuclear explosion replaces Alex's cave's nuclear explosion when enabled in config
 // (for usual nuclear bomb detonations)
-public class NuclearExplosion2Entity extends Entity {
+public class NuclearExplosion2Entity extends NuclearExplosionEntity {
     private boolean spawnedParticle; // Mushroom cloud is a big particle
 
     // 16^3 subchunk actually
@@ -72,8 +73,6 @@ public class NuclearExplosion2Entity extends Entity {
     private boolean loadingChunks;
     private Explosion dummyExplosion;
 
-    private static final EntityDataAccessor<Float> SIZE;
-    private static final EntityDataAccessor<Boolean> NO_GRIEFING;
     private static final EntityDataAccessor<Integer> EXPLOSION_STAGE;
 
     public enum ExplosionState {
@@ -87,8 +86,6 @@ public class NuclearExplosion2Entity extends Entity {
     public static int CHUNKS_AFFECTED_RADIUS_MULTIPLIER = 15;
 
     static {
-        SIZE = SynchedEntityData.defineId(NuclearExplosion2Entity.class, EntityDataSerializers.FLOAT);
-        NO_GRIEFING = SynchedEntityData.defineId(NuclearExplosion2Entity.class, EntityDataSerializers.BOOLEAN);
         EXPLOSION_STAGE = SynchedEntityData.defineId(NuclearExplosion2Entity.class, EntityDataSerializers.INT);
     }
 
@@ -147,7 +144,7 @@ public class NuclearExplosion2Entity extends Entity {
 
     @Override
     public void tick() {
-        super.tick();
+        super.baseTick();
         if (this.level().isClientSide()) {
             this.clientTick();
         }
@@ -614,17 +611,8 @@ public class NuclearExplosion2Entity extends Entity {
     }
 
     protected void defineSynchedData() {
-        this.entityData.define(SIZE, 1.0F);
-        this.entityData.define(NO_GRIEFING, false);
+        super.defineSynchedData();
         this.entityData.define(EXPLOSION_STAGE, 0);
-    }
-
-    public float getSize() {
-        return this.entityData.get(SIZE);
-    }
-
-    public void setSize(float f) {
-        this.entityData.set(SIZE, f);
     }
 
     public ExplosionState getExplosionState() {
@@ -637,14 +625,6 @@ public class NuclearExplosion2Entity extends Entity {
 
     public void setExplosionStage(int state) {
         this.entityData.set(EXPLOSION_STAGE, state < ExplosionState.values().length ? state : 0);
-    }
-
-    public boolean isNoGriefing() {
-        return this.entityData.get(NO_GRIEFING);
-    }
-
-    public void setNoGriefing(boolean noGriefing) {
-        this.entityData.set(NO_GRIEFING, noGriefing);
     }
 
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
