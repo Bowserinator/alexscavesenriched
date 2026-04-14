@@ -1,9 +1,15 @@
 {
     "type": "alexscavesenriched:centrifuge",
-    "input": "minecraft:magma_cream",
+    "input": {
+        "item": "minecraft:magma_cream"
+    },
     "chance": 0.005,
     "outputs": [
-        "minecraft:slime_ball",
-        "minecraft:blaze_powder"
+        {
+            "item": "minecraft:slime_ball"
+        },
+        {
+            "item": "minecraft:blaze_powder"
+        }
     ]
 }

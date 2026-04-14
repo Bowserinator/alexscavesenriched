@@ -131,9 +131,8 @@ public class CentrifugeBlockEntity extends BaseContainerBlockEntity implements W
                     requireResync = true;
                     invChanged = true;
 
-                    for (var outputItem : recipe.getOutputs()) {
+                    for (var outStack : recipe.getOutputs()) {
                         boolean canFitInside = false;
-                        ItemStack outStack = new ItemStack(outputItem, 1);
 
                         for (int j = N_INPUT_SLOTS; j < N_SLOTS; j++) {
                             if (!entity.canFitInResultSlot(outStack, j))
@@ -169,18 +168,8 @@ public class CentrifugeBlockEntity extends BaseContainerBlockEntity implements W
 
     public static boolean inputAllowed(Item input, Level level) {
         var recipes = level.getRecipeManager().getAllRecipesFor(ACERecipeRegistry.CENTRIFUGE_TYPE.get());
-        if (allowedItems.isEmpty()) { // Pre-populate with non-tags
-            for (CentrifugeRecipe recipe : recipes) {
-                if (recipe.getInput() != null)
-                    allowedItems.add(recipe.getInput().getItem());
-            }
-        }
-        if (allowedItems.contains(input))
-            return true;
-        var inputStack = new ItemStack(input, 1);
         for (CentrifugeRecipe recipe : recipes) {
-            if (recipe.matches(inputStack)) {
-                allowedItems.add(input);
+            if (recipe.matches(new ItemStack(input))) {
                 return true;
             }
         }

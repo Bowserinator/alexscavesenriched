@@ -1,9 +1,13 @@
 {
-    "type": "alexscavesenriched:centrifuge",
-    "input": "minecraft:sugar_cane",
-    "chance": 0.005,
-    "outputs": [
-        "minecraft:sugar",
-        "minecraft:sugar"
-    ]
+  "type": "alexscavesenriched:centrifuge",
+  "input": {
+    "item": "minecraft:sugar_cane"
+  },
+  "chance": 0.005,
+  "outputs": [
+    {
+      "item": "minecraft:sugar",
+      "count": 2
+    }
+  ]
 }
