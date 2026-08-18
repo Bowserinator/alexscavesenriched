@@ -9,8 +9,8 @@
         "NuclearFurnaceBlockEntityMixin",
         "NuclearFurnaceMenuMixin",
         "entity.AbstractSkeletonMixin",
+        "entity.EntityTypeMixin",
         "entity.Monster",
-        "entity.NuclearBombEntityMixin",
         "entity.NuclearExplosionEntityMixin",
         "entity.TremorzillaEntityMixin",
         "items.EnchantmentMixin"
